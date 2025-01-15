@@ -26,6 +26,7 @@ function App() {
       }
     }).then((resp) => {
       setMovie(resp.data.results);
+      console.log("film");
       console.log(resp.data.results);
 
     });
@@ -41,6 +42,7 @@ function App() {
       }
     }).then((resp) => {
       setSeries(resp.data.results);
+      console.log("serie");
       console.log(resp.data.results);
 
     })
@@ -90,15 +92,15 @@ function App() {
     setSearchValue,
     getMovies,
     getSeries,
-    
-
+    getFlag,
+    getStars,
+    imageUrl,
   }
 
 
   return (
     <>
-      <GlobalContext.Provider value={globalProviderValue}>
-
+      <GlobalContext.Provider value={globalProviderValue} >
       <BrowserRouter>
           <Routes>
             <Route element={<AppLayout />}>
@@ -106,58 +108,6 @@ function App() {
             </Route>
           </Routes>
         </BrowserRouter>
-        
-        <div>
-          {/* <input type="search" value={searchValue} onChange={(event) => setSearchValue(event.target.value)} />
-          <button onClick={() => { getMovies(), getSeries() }}>Cerca</button> */}
-
-          <br />
-
-          {/* stampa dei film */}
-          <section>
-            <h2>Film</h2>
-            {globalProviderValue.movie.map((curMovie, index) => {
-              return (
-                <div key={index}>
-                  <img src={`${imageUrl}${curMovie.poster_path}`} />
-                  <h3>Titolo</h3>
-                  <div>{curMovie.title}</div>
-                  <h3>Titolo Originale </h3>
-                  <div>{curMovie.original_title}</div>
-                  <div><strong>lingua </strong>:
-                    <img src={getFlag(curMovie.original_language)} alt="en" width="20px" height="12px" />
-                  </div>
-                  <div><strong>voto :</strong> {getStars(curMovie.vote_average)}</div>
-                  <br />
-                </div>
-              )
-            })}
-          </section>
-
-          {/* stampa delle serie */}
-          <section>
-            <h2>Serie TV</h2>
-            {globalProviderValue.series.map((curSeries, index) => {
-              return (
-                <div key={index}>
-                  <img src={`${imageUrl}${curSeries.poster_path}`} />
-                  <h3>Titolo</h3>
-                  <div>{curSeries.name}</div>
-                  <h3>Titolo Originale </h3>
-                  <div>{curSeries.original_name}</div>
-                  <div><strong>lingua </strong>:
-                    <img src={getFlag(curSeries.original_language)} alt="en" width="20px" height="12px" />
-                  </div>
-                  <div><strong>voto :</strong> {curSeries.vote_average}</div>
-                  <br />
-                </div>
-              )
-            })}
-          </section>
-
-
-        </div>
-        
       </GlobalContext.Provider>
     </>
   )

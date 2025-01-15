@@ -1,9 +1,12 @@
+import AppCard from "./AppCard";
 
-function HomePage () {
+function HomePage() {
 
-    return(
-        <main>
-            <div>homepage</div>
+    return (
+        <main className="bg-gray ">
+            
+                <AppCard />
+            
         </main>
     )
 }
