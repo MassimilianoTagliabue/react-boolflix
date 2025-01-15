@@ -2,8 +2,11 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import GlobalContext from "./contexts/GlobalContext"
 import { useEffect, useState } from "react"
 import axios from "axios"
+import AppLayout from "./components/AppLayout"
+import HomePage from "./components/HomePage"
 
-const apiUrl = "https://api.themoviedb.org/3/search"
+const apiUrl = "https://api.themoviedb.org/3"
+const imageUrl = "https://image.tmdb.org/t/p/w300"
 const apiKey = "febf50335e1f2492dcf7e91bd2f58719"
 
 function App() {
@@ -15,7 +18,7 @@ function App() {
 
   //prende i film
   const getMovies = () => {
-    axios.get(`${apiUrl}/movie`, {
+    axios.get(`${apiUrl}/search/movie`, {
       params: {
         api_key: apiKey,
         query: searchValue,
@@ -30,7 +33,7 @@ function App() {
 
   const getSeries = () => {
 
-    axios.get(`${apiUrl}/tv`, {
+    axios.get(`${apiUrl}/search/tv`, {
       params: {
         api_key: apiKey,
         query: searchValue,
@@ -44,7 +47,7 @@ function App() {
   }
 
 
-    //prende la bandiera in base alla lingua
+  //prende la bandiera in base alla lingua
   const getFlag = (lang) => {
     let flag = "";
 
@@ -58,6 +61,24 @@ function App() {
     return flag;
   }
 
+  //conta le stelle
+  const getStars = (vote) => {
+
+    const star = Math.ceil(vote / 2);
+    const starIcon = [];
+
+
+    for (let i = 0; i < 5; i++) {
+      if (i < star) {
+        starIcon.push(<i className="fa-solid fa-star star-color" key={i}></i>);
+      } else {
+        starIcon.push(<i className="fa-regular fa-star star-color" key={i}></i>);
+      }
+    }
+
+    return (starIcon);
+
+  }
 
 
   const globalProviderValue = {
@@ -65,6 +86,11 @@ function App() {
     setMovie,
     series,
     setSeries,
+    searchValue,
+    setSearchValue,
+    getMovies,
+    getSeries,
+    
 
   }
 
@@ -72,9 +98,19 @@ function App() {
   return (
     <>
       <GlobalContext.Provider value={globalProviderValue}>
+
+      <BrowserRouter>
+          <Routes>
+            <Route element={<AppLayout />}>
+            <Route index element={<HomePage/>}/>
+            </Route>
+          </Routes>
+        </BrowserRouter>
+        
         <div>
-          <input type="search" value={searchValue} onChange={(event) => setSearchValue(event.target.value)} />
-          <button onClick={() => { getMovies(), getSeries() }}>Cerca</button>
+          {/* <input type="search" value={searchValue} onChange={(event) => setSearchValue(event.target.value)} />
+          <button onClick={() => { getMovies(), getSeries() }}>Cerca</button> */}
+
           <br />
 
           {/* stampa dei film */}
@@ -83,6 +119,7 @@ function App() {
             {globalProviderValue.movie.map((curMovie, index) => {
               return (
                 <div key={index}>
+                  <img src={`${imageUrl}${curMovie.poster_path}`} />
                   <h3>Titolo</h3>
                   <div>{curMovie.title}</div>
                   <h3>Titolo Originale </h3>
@@ -90,7 +127,7 @@ function App() {
                   <div><strong>lingua </strong>:
                     <img src={getFlag(curMovie.original_language)} alt="en" width="20px" height="12px" />
                   </div>
-                  <div><strong>voto :</strong> {curMovie.vote_average}</div>
+                  <div><strong>voto :</strong> {getStars(curMovie.vote_average)}</div>
                   <br />
                 </div>
               )
@@ -103,12 +140,13 @@ function App() {
             {globalProviderValue.series.map((curSeries, index) => {
               return (
                 <div key={index}>
+                  <img src={`${imageUrl}${curSeries.poster_path}`} />
                   <h3>Titolo</h3>
                   <div>{curSeries.name}</div>
                   <h3>Titolo Originale </h3>
                   <div>{curSeries.original_name}</div>
                   <div><strong>lingua </strong>:
-                  <img src={getFlag(curSeries.original_language)} alt="en" width="20px" height="12px" />
+                    <img src={getFlag(curSeries.original_language)} alt="en" width="20px" height="12px" />
                   </div>
                   <div><strong>voto :</strong> {curSeries.vote_average}</div>
                   <br />
@@ -119,7 +157,7 @@ function App() {
 
 
         </div>
-
+        
       </GlobalContext.Provider>
     </>
   )
